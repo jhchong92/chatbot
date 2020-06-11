@@ -11,7 +11,7 @@ use Mix.Config
 # before starting your production server.
 config :chatbot, ChatbotWeb.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [scheme: "https", host: "damp-caverns-78180.herokuapp.com", port: 443],
+  url: [scheme: "https", host: "sheltered-caverns-23304.herokuapp.com", port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
 
 # Do not print debug messages in production
