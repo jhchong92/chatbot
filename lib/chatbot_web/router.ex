@@ -20,9 +20,11 @@ defmodule ChatbotWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", ChatbotWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", ChatbotWeb do
+    pipe_through :api
+
+    get "/", ChatbotController, :hello
+  end
 
   # Enables LiveDashboard only for development
   #
