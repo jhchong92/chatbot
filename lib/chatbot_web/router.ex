@@ -24,6 +24,7 @@ defmodule ChatbotWeb.Router do
     pipe_through :api
 
     get "/", ChatbotController, :hello
+    get "/books", ChatbotController, :listBooks
   end
 
   # Enables LiveDashboard only for development
