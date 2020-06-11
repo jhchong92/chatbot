@@ -3,7 +3,7 @@ defmodule ChatbotWeb.ChatbotView do
 
     def render("hello.json", _params) do
       %{
-        message: "Hello World"
+        message: "Hello World!"
       }
     end
 end
