@@ -52,10 +52,12 @@ defmodule ChatbotWeb.ChatbotController do
 
     # user = GraphClient.Api.get_profile("2883908308404075")
     user = %{id: "2883908308404075", first_name: "Chong", last_name: "Hao"}
-    x = GraphClient.Api.send_message(user, "Hello you")
+    x = GraphClient.Api.send_message(user, "Hello you", ["Thanks"])
     IO.inspect(x)
     conn
       |> put_status(:ok)
       |> text("hello")
   end
+
+
 end

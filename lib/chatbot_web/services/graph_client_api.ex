@@ -13,7 +13,7 @@ defmodule GraphClient.Api do
   end
 
 
-  def send_message(user, message) do
+  def send_message(user, message, quick_replies \\ []) do
     headers = [{"Content-type", "application/json"}]
 
     body = Poison.encode!( %{
@@ -21,7 +21,8 @@ defmodule GraphClient.Api do
         id: user.id
       },
       message: %{
-        text: message
+        text: message,
+        quick_replies: quick_replies
       }
     })
     "/me/messages"
