@@ -5,6 +5,11 @@ defmodule ChatbotWeb.ChatbotController do
     IO.inspect(Application.get_all_env(:chatbot))
     # IO.inspect(Application.get_env(:chatbot, __MODULE__)[:page_access_token])
     # Map.merge(%{abc: "abc"}, %{bcd: %{efg: "efg"}})
+    try do
+      conn.x
+    rescue
+      _ -> "Hello"
+    end
 
     # user = GraphClient.Api.get_profile("2883908308404075")
         # |> (fn(x) -> x.body end).()
@@ -46,14 +51,25 @@ defmodule ChatbotWeb.ChatbotController do
     IO.puts("*******Params*********")
     IO.inspect(params)
 
+    object = Map.get(params, "object")
+
+    if (object === "page") do
+      entry = Map.get(params, "entry")
+      try do
+        Enum.each(entry, fn(x) -> handleEntry(x) end)
+      rescue
+        _ -> "Error!"
+      end
+    end
     # {:ok, body, _conn} = read_body(conn)
     # IO.puts("*******Body*********")
     # IO.inspect(body)
 
     # user = GraphClient.Api.get_profile("2883908308404075")
-    user = %{id: "2883908308404075", first_name: "Chong", last_name: "Hao"}
-    x = GraphClient.Api.send_message(user, "Hello you", ["Thanks"])
-    IO.inspect(x)
+    # user = %{id: "2883908308404075", first_name: "Chong", last_name: "Hao"}
+    # x = GraphClient.Api.send_message(user, "Hello you", ["Thanks"])
+    # IO.inspect(x)
+
     conn
       |> put_status(:ok)
       |> text("hello")
@@ -69,4 +85,43 @@ defmodule ChatbotWeb.ChatbotController do
   end
 
 
+  defp handleEntry(entry) do
+    IO.puts("handleEntry")
+    IO.inspect(entry)
+    [head] = Map.get(entry, "messaging")
+    handleMessage(head)
+  end
+
+  defp handleMessage(message) do
+    IO.puts("handleMessage")
+    IO.inspect(message)
+    cond do
+      Map.get(message, "postback") ->
+        handlePostback(message)
+      Map.get(message, "quick_reply") ->
+        handleQuickReply(message)
+      Map.get(message, "text") ->
+        handleTextMessage(message)
+    end
+  end
+
+  defp handlePostback(message) do
+    IO.puts("handlePostback")
+
+  end
+
+  defp handleTextMessage(message) do
+    IO.puts("handleTextMessage")
+  end
+
+  defp handleQuickReply(message) do
+    IO.puts("handleQuickReply")
+  end
+
+  defp handlePayload(payload) do
+    case do
+      payload == "GET_STARTED" ->
+
+    end
+  end
 end
