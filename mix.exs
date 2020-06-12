@@ -46,6 +46,7 @@ defmodule Chatbot.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:httpoison, "~> 1.6"},
+      {:poison, "~> 3.1"},
       {:sweet_xml, "~> 0.3.0"}
     ]
   end

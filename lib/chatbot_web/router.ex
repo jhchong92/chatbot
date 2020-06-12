@@ -26,6 +26,7 @@ defmodule ChatbotWeb.Router do
     get "/", ChatbotController, :hello
     get "/books", ChatbotController, :listBooks
     get "/hook", ChatbotController, :hook
+    post "/hook", ChatbotController, :hookHandle
 
   end
 

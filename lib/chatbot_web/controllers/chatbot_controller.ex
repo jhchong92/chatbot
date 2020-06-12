@@ -2,6 +2,14 @@ defmodule ChatbotWeb.ChatbotController do
   use ChatbotWeb, :controller
   import SweetXml
   def hello(conn, _params) do
+    IO.inspect(Application.get_all_env(:chatbot))
+    # IO.inspect(Application.get_env(:chatbot, __MODULE__)[:page_access_token])
+    # Map.merge(%{abc: "abc"}, %{bcd: %{efg: "efg"}})
+
+    # user = GraphClient.Api.get_profile("2883908308404075")
+        # |> (fn(x) -> x.body end).()
+        # |> Poison.decode(keys: :atoms)
+    # IO.inspect(user)
     render(conn, "hello.json")
   end
 
@@ -32,4 +40,18 @@ defmodule ChatbotWeb.ChatbotController do
       |> text(challenge)
   end
 
+  def hookHandle(conn, params) do
+    IO.puts("*******Conn*********")
+    IO.inspect(conn)
+    IO.puts("*******Params*********")
+    IO.inspect(params)
+
+    {:ok, body, _conn} = read_body(conn)
+
+    IO.puts("*******Body*********")
+    IO.inspect(body)
+    conn
+      |> put_status(:ok)
+      |> text("hello")
+  end
 end

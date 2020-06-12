@@ -30,6 +30,16 @@ config :chatbot, ChatbotWeb.Endpoint,
     ]
   ]
 
+config :chatbot, ChatbotWeb.ChatbotController,
+  page_access_token: System.get_env("PAGE_ACCESS_TOKEN")
+
+config :chatbot, GraphClient,
+  graph_url: "https://graph.facebook.com",
+  page_id: System.get_env("PAGE_ID"),
+  app_id: System.get_env("APP_ID"),
+  page_access_token: System.get_env("PAGE_ACCESS_TOKEN"),
+  app_secret: System.get_env("APP_SECRET")
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed
