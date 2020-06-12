@@ -46,10 +46,14 @@ defmodule ChatbotWeb.ChatbotController do
     IO.puts("*******Params*********")
     IO.inspect(params)
 
-    {:ok, body, _conn} = read_body(conn)
+    # {:ok, body, _conn} = read_body(conn)
+    # IO.puts("*******Body*********")
+    # IO.inspect(body)
 
-    IO.puts("*******Body*********")
-    IO.inspect(body)
+    # user = GraphClient.Api.get_profile("2883908308404075")
+    user = %{id: "2883908308404075", first_name: "Chong", last_name: "Hao"}
+    x = GraphClient.Api.send_message(user, "Hello you")
+    IO.inspect(x)
     conn
       |> put_status(:ok)
       |> text("hello")
