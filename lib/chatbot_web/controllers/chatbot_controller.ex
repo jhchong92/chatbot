@@ -59,5 +59,14 @@ defmodule ChatbotWeb.ChatbotController do
       |> text("hello")
   end
 
+  def setup(conn, _params) do
+    IO.puts("setup")
+    x = GraphClient.MessengerProfileApi.set_get_started()
+    IO.inspect(x)
+    conn
+      |> put_status(:ok)
+      |> text("setup")
+  end
+
 
 end

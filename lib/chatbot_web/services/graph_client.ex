@@ -14,4 +14,21 @@ defmodule GraphClient do
       params: merged
     )
   end
+
+  defmodule MessengerProfileApi do
+    def set_get_started() do
+      set_profile(%{
+        get_started: %{
+          payload: "GET_STARTED"
+        }
+      })
+    end
+
+    def set_profile(payload) do
+      jsonBody = Poison.encode!(payload)
+      headers = [{"Content-type", "application/json"}]
+      "/me/messenger_profile"
+      |>  GraphClient.post!(jsonBody, headers)
+    end
+  end
 end

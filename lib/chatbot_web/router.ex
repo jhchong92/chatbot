@@ -28,6 +28,7 @@ defmodule ChatbotWeb.Router do
     get "/hook", ChatbotController, :hook
     post "/hook", ChatbotController, :hookHandle
 
+    get "/setup", ChatbotController, :setup
   end
 
   # Enables LiveDashboard only for development
