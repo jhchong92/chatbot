@@ -14,4 +14,22 @@ defmodule ChatbotWeb.ChatbotController do
     IO.inspect(result)
     render(conn, "hello.json")
   end
+
+  def hook(conn, params) do
+    mode = Map.get(params, "hub.mode")
+    token = Map.get(params, "hub.verify_token")
+    challenge = Map.get(params, "hub.challenge")
+
+    status = if mode == "subscribe" && token == "ba212eeb69a50f8c4e3533992e98a125" do
+      :ok
+    else
+      :forbidden
+    end
+
+    IO.inspect(params)
+    conn
+      |> put_status(status)
+      |> text(challenge)
+  end
+
 end
