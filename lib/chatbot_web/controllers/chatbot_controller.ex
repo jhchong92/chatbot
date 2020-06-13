@@ -1,7 +1,7 @@
 defmodule ChatbotWeb.ChatbotController do
   use ChatbotWeb, :controller
   def hello(conn, _params) do
-    IO.inspect(Application.get_all_env(:chatbot))
+    # IbmClient.Api.get_sentiment("https://www.goodreads.com/book/show/6324600-birth-control-is-sinful-in-the-christian-marriages-and-also-robbing-god")
     render(conn, "hello.json")
   end
 
