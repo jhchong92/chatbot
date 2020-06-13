@@ -154,6 +154,9 @@ defmodule ChatbotWeb.ChatbotController do
       payload |> String.contains?("BOOK_REVIEW_") ->
         book_id = payload
         |> String.slice(String.length("BOOK_REVIEW_")..-1)
+        x = Goodreads.Api.get_review_iframe_url(book_id)
+        sentiment = IbmClient.Api.get_sentiment(x)
+        [ResponseFactory.book_review(sentinment)]
 
       true ->
         nil

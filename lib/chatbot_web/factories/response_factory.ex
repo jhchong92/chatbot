@@ -31,4 +31,22 @@ defmodule ResponseFactory do
       QuickReply.new("Start again", "GET_STARTED")
     ])
   end
+
+  def book_review(sentinment) do
+    case sentinment.document.label do
+       "positive" ->
+          """
+          This seems like a great book, judging from its recent reviews.
+          Do consider putting this on your read list!
+          """
+       "negative" ->
+          """
+          The recent reviews for this book skews towards the negative side,
+          we do not recommend this for reading.
+          """
+        _ ->
+
+    end
+
+  end
 end
