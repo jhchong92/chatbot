@@ -52,11 +52,14 @@ defmodule ChatbotWeb.ChatbotController do
     IO.inspect(params)
 
     object = Map.get(params, "object")
-
+    user = GraphClient.Api.get_profile("2883908308404075")
     if (object === "page") do
       entry = Map.get(params, "entry")
       try do
-        Enum.each(entry, fn(x) -> handleEntry(x) end)
+        [response] = Enum.map(entry, fn(x) -> handleEntry(x) end)
+        IO.puts("!!!!!Response!!!!!")
+        IO.inspect(response)
+        GraphClient.Api.send_message(user, response)
       rescue
         _ -> "Error!"
       end
@@ -65,7 +68,7 @@ defmodule ChatbotWeb.ChatbotController do
     # IO.puts("*******Body*********")
     # IO.inspect(body)
 
-    # user = GraphClient.Api.get_profile("2883908308404075")
+
     # user = %{id: "2883908308404075", first_name: "Chong", last_name: "Hao"}
     # x = GraphClient.Api.send_message(user, "Hello you", ["Thanks"])
     # IO.inspect(x)
@@ -95,33 +98,43 @@ defmodule ChatbotWeb.ChatbotController do
   defp handleMessage(message) do
     IO.puts("handleMessage")
     IO.inspect(message)
+    postback = Map.get(message, "postback")
+    quick_replies = Map.get(message, "quick_replies")
+    text = Map.get(message, "text")
     cond do
-      Map.get(message, "postback") ->
-        handlePostback(message)
-      Map.get(message, "quick_reply") ->
-        handleQuickReply(message)
-      Map.get(message, "text") ->
+      postback ->
+        handlePostback(postback)
+      quick_replies ->
+        handleQuickReply(quick_replies)
+      text ->
         handleTextMessage(message)
     end
   end
 
-  defp handlePostback(message) do
+  defp handlePostback(postback) do
     IO.puts("handlePostback")
-
+    payload = Map.get(postback, "payload")
+    handlePayload(payload)
   end
 
   defp handleTextMessage(message) do
     IO.puts("handleTextMessage")
   end
 
-  defp handleQuickReply(message) do
+  defp handleQuickReply(quick_replies) do
     IO.puts("handleQuickReply")
   end
 
   defp handlePayload(payload) do
-    case do
+    cond do
       payload == "GET_STARTED" ->
-
+        quickReplies = [
+          QuickReply.new("Name", "SEARCH_NAME"),
+          QuickReply.new("ID", "SEARCH_ID")
+        ]
+      Response.text_message("Search by", quickReplies)
+      true ->
+        nil
     end
   end
 end
