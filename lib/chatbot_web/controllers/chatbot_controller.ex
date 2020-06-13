@@ -55,10 +55,13 @@ defmodule ChatbotWeb.ChatbotController do
     if (object === "page") do
       entry = Map.get(params, "entry")
       try do
-        [response] = Enum.map(entry, fn(x) -> handleEntry(x) end)
+        [responses] = Enum.map(entry, fn(x) -> handleEntry(x) end)
         IO.puts("!!!!!Response!!!!!")
-        IO.inspect(response)
-        GraphClient.Api.send_message(user, response)
+        IO.inspect(responses)
+        responses
+        |> Enum.each((fn(response) -> GraphClient.Api.send_message(user, response) end))
+        # Enum.each(responses, fun)
+
       rescue
         _ -> "Error!"
       end
@@ -125,10 +128,11 @@ defmodule ChatbotWeb.ChatbotController do
       true ->
         # search by title
         IO.puts("Search by title")
+
     end
 
 
-    ResponseFactory.fallback()
+    [ResponseFactory.fallback()]
   end
 
   defp handleQuickReply(quick_reply) do
@@ -140,12 +144,14 @@ defmodule ChatbotWeb.ChatbotController do
   defp handlePayload(payload) do
     cond do
       payload == "GET_STARTED" ->
-        ResponseFactory.get_started()
+        [ResponseFactory.get_started()]
       payload == "SEARCH_BOOK_TITLE" ->
-        ResponseFactory.request_book_title()
+        [ResponseFactory.request_book_title()]
       payload == "SEARCH_GOODREADS_ID" ->
-        ResponseFactory.request_goodreads_id()
-
+        [ResponseFactory.request_goodreads_id()]
+      payload |> String.contains?("BOOK_REVIEW_") ->
+        book_id = payload
+        |> String.slice(String.length("BOOK_REVIEW_")..-1)
 
       true ->
         nil

@@ -19,6 +19,10 @@ defmodule ResponseFactory do
     Response.text_message("Please enter a Goodreads book ID that you would like to search. (e.g. 44458285")
   end
 
+  def suggest_book(book) do
+    Response.generic_template(book.image_url, book.title, book.subtitle, [AttachmentButtonFactory.review(book)])
+  end
+
   def fallback() do
     Response.text_message("""
       Sorry.. I'm still new. Please navigate the conversation by clicking on the

@@ -11,7 +11,7 @@ defmodule AttachmentTemplateFactory do
     |> setSubtitle(book.author_name)
     |> setImageUrl(book.image_url)
     |> setButtons([
-      AttachmentButtonFactory.our_thoughts(book)
+      AttachmentButtonFactory.review(book)
     ])
   end
 end
