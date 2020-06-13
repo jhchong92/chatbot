@@ -2,6 +2,8 @@ defmodule ChatbotWeb.ChatbotController do
   use ChatbotWeb, :controller
   def hello(conn, _params) do
     # IbmClient.Api.get_sentiment("https://www.goodreads.com/book/show/6324600-birth-control-is-sinful-in-the-christian-marriages-and-also-robbing-god")
+    x = Goodreads.Api.get_review_iframe_url("24817626")
+    IO.inspect x
     render(conn, "hello.json")
   end
 

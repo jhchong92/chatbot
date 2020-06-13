@@ -29,7 +29,20 @@ defmodule Goodreads do
           author_name: ~x"./author/name/text()",
           image_url: ~x"./image_url/text()"
         )
+    end
 
+    def get_review_iframe_url(book_id) do
+      widget = Goodreads.get!("/book/show.xml?id=#{book_id}")
+      |> (fn(x) -> x.body end).()
+      |> xpath(
+          ~x"//book/reviews_widget/text()"
+         )
+      |> to_string()
+
+      [ _ | tail ] = Regex.run(~r/src="([^\s]*)"\s+/, widget)
+      tail
+      # IO.puts "TAILL"
+      # IO.inspect result
     end
   end
 end
