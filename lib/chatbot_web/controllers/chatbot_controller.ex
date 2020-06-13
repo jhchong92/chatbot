@@ -1,27 +1,29 @@
 defmodule ChatbotWeb.ChatbotController do
   use ChatbotWeb, :controller
-  import SweetXml
   def hello(conn, _params) do
     IO.inspect(Application.get_all_env(:chatbot))
-    # IO.inspect(Application.get_env(:chatbot, __MODULE__)[:page_access_token])
-    # Map.merge(%{abc: "abc"}, %{bcd: %{efg: "efg"}})
-    try do
-      conn.x
-    rescue
-      _ -> "Hello"
-    end
-
-    # user = GraphClient.Api.get_profile("2883908308404075")
-        # |> (fn(x) -> x.body end).()
-        # |> Poison.decode(keys: :atoms)
-    # IO.inspect(user)
     render(conn, "hello.json")
   end
 
   def listBooks(conn, _params) do
     HTTPoison.start()
-    books = Goodreads.Api.top_five_books("xzxczxczxczxcxz")
+    books = Goodreads.Api.top_five_books("mockingbird")
     IO.inspect(books)
+    book = List.first(books)
+    template = AttachmentTemplateFactory.book_attachment(book)
+    |> AttachmentTemplate.getAttachment()
+    IO.inspect template
+    user = %{id: "2883908308404075", first_name: "Chong", last_name: "Hao"}
+    # encoded = Poison.encode!( %{
+    #   recipient: %{
+    #     id: user.id
+    #   },
+    #   message: template
+    # })
+
+    # IO.inspect encoded
+    x = GraphClient.Api.send_template(user, template)
+    IO.inspect x
     render(conn, "hello.json")
   end
 

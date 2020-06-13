@@ -24,10 +24,10 @@ defmodule Goodreads do
       |> (fn(x) -> x.body end).()
       |>  xpath(
           ~x"//search/results/work/best_book"l,
-          book_id: ~x"./id/text()",
-          book_title: ~x"./title/text()",
+          id: ~x"./id/text()",
+          title: ~x"./title/text()",
           author_name: ~x"./author/name/text()",
-          book_image_url: ~x"./image_url/text()"
+          image_url: ~x"./image_url/text()"
         )
 
     end
