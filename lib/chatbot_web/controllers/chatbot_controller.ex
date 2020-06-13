@@ -99,15 +99,15 @@ defmodule ChatbotWeb.ChatbotController do
     IO.puts("handleMessage")
     IO.inspect(message)
     postback = Map.get(message, "postback")
-    quick_replies = Map.get(message, "quick_replies")
+    quick_reply = Map.get(message, "quick_reply")
     text = Map.get(message, "text")
     cond do
       postback ->
         handlePostback(postback)
-      quick_replies ->
-        handleQuickReply(quick_replies)
+      quick_reply ->
+        handleQuickReply(quick_reply)
       text ->
-        handleTextMessage(message)
+        handleTextMessage(text)
     end
   end
 
@@ -117,22 +117,37 @@ defmodule ChatbotWeb.ChatbotController do
     handlePayload(payload)
   end
 
-  defp handleTextMessage(message) do
+  defp handleTextMessage(text) do
     IO.puts("handleTextMessage")
+    cond do
+      Integer.parse(text) ->
+        # search goodread books
+        IO.puts("Search by ID")
+      true ->
+        # search by title
+        IO.puts("Search by title")
+    end
+
+
+    ResponseFactory.fallback()
   end
 
-  defp handleQuickReply(quick_replies) do
+  defp handleQuickReply(quick_reply) do
     IO.puts("handleQuickReply")
+    payload = Map.get(quick_reply, "payload")
+    handlePayload(payload)
   end
 
   defp handlePayload(payload) do
     cond do
       payload == "GET_STARTED" ->
-        quickReplies = [
-          QuickReply.new("Name", "SEARCH_NAME"),
-          QuickReply.new("ID", "SEARCH_ID")
-        ]
-      Response.text_message("Search by", quickReplies)
+        ResponseFactory.get_started()
+      payload == "SEARCH_BOOK_TITLE" ->
+        ResponseFactory.request_book_title()
+      payload == "SEARCH_GOODREADS_ID" ->
+        ResponseFactory.request_goodreads_id()
+
+
       true ->
         nil
     end
