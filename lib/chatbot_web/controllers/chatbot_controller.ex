@@ -28,8 +28,10 @@ defmodule ChatbotWeb.ChatbotController do
     IO.puts("*******Params*********")
     IO.inspect(params)
 
+    sender_id = get_sender_id_from_params(params)
+    user = GraphClient.Api.get_profile(sender_id)
+
     object = Map.get(params, "object")
-    user = GraphClient.Api.get_profile("2883908308404075")
     if (object === "page") do
       entry = Map.get(params, "entry")
       try do
@@ -146,5 +148,14 @@ defmodule ChatbotWeb.ChatbotController do
       true ->
         nil
     end
+  end
+
+  defp get_sender_id_from_params(params) do
+    params
+      |> Map.get("entry")
+      |> List.first()
+      |> Map.get("messaging")
+      |> List.first()
+      |> get_in(["sender", "id"])
   end
 end
