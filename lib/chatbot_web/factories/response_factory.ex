@@ -11,6 +11,10 @@ defmodule ResponseFactory do
     )
   end
 
+  def general_message(message) do
+    Response.text_message(message)
+  end
+
   def request_book_title() do
     Response.text_message("Please enter the title that you would like to search")
   end
@@ -20,7 +24,16 @@ defmodule ResponseFactory do
   end
 
   def suggest_book(book) do
-    Response.generic_template(book.image_url, book.title, book.subtitle, [AttachmentButtonFactory.review(book)])
+    Response.generic_template(book.image_url, book.title, book.author_name, [AttachmentButtonFactory.review(book)])
+  end
+
+  def book_empty_results() do
+    Response.text_message("""
+      Sorry.. I could not find anything related. Please enter another title or Goodreads book ID or
+      you may restart this conversation.
+    """, [
+      QuickReply.new("Start again", "GET_STARTED")
+    ])
   end
 
   def fallback() do
@@ -32,8 +45,11 @@ defmodule ResponseFactory do
     ])
   end
 
-  def book_review(sentinment) do
-    case sentinment.document.label do
+  def book_review(sentiment) do
+    IO.puts "book_review"
+    # IO.inspect sentiment
+    label = get_in(sentiment, [ "document", "label"])
+    message = case label do
        "positive" ->
           """
           This seems like a great book, judging from its recent reviews.
@@ -45,8 +61,12 @@ defmodule ResponseFactory do
           we do not recommend this for reading.
           """
         _ ->
-
+          """
+          Sorry. Something went wrong.
+          """
     end
-
+    IO.puts "message"
+    IO.inspect message
+    Response.text_message(message)
   end
 end

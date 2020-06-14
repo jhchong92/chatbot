@@ -31,7 +31,9 @@ config :chatbot, ChatbotWeb.Endpoint,
   ]
 
 config :chatbot, ChatbotWeb.ChatbotController,
-  page_access_token: System.get_env("PAGE_ACCESS_TOKEN")
+  page_access_token: System.get_env("PAGE_ACCESS_TOKEN"),
+  verify_token: "ba212eeb69a50f8c4e3533992e98a125"
+
 
 config :chatbot, GraphClient,
   graph_url: "https://graph.facebook.com",

@@ -31,6 +31,18 @@ defmodule Goodreads do
         )
     end
 
+    def get_book(id) do
+      Goodreads.get!("/book/show.xml?id=#{id}")
+      |> (fn(x) -> x.body end).()
+      |>  xpath(
+          ~x"//book"l,
+          id: ~x"./id/text()",
+          title: ~x"./title/text()",
+          author_name: ~x"./author/name/text()",
+          image_url: ~x"./image_url/text()"
+        )
+    end
+
     def get_review_iframe_url(book_id) do
       widget = Goodreads.get!("/book/show.xml?id=#{book_id}")
       |> (fn(x) -> x.body end).()

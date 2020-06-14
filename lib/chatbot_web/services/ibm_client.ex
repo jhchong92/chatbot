@@ -20,7 +20,7 @@ defmodule IbmClient do
 
   defmodule Api do
     def analyze(url) do
-      IO.puts "Analyze"
+      IO.puts "analyze"
 
       body = %{
         url: url |> to_string(),
@@ -32,12 +32,12 @@ defmodule IbmClient do
       x = IbmClient.post!("/analyze", encoded, [], [])
           |> (fn(x) -> x.body end).()
           |> Poison.decode!()
-      IO.inspect x
     end
 
     def get_sentiment(url) do
-      analyze(url)
-      |> Map.take(["sentiment"])
+      IO.puts "get_sentiment"
+      analyzed = analyze(url)
+      |> Map.get("sentiment")
     end
   end
 end

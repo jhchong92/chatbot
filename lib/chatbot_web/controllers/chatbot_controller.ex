@@ -1,9 +1,32 @@
 defmodule ChatbotWeb.ChatbotController do
   use ChatbotWeb, :controller
   def hello(conn, _params) do
-    # IbmClient.Api.get_sentiment("https://www.goodreads.com/book/show/6324600-birth-control-is-sinful-in-the-christian-marriages-and-also-robbing-god")
-    x = Goodreads.Api.get_review_iframe_url("24817626")
-    IO.inspect x
+    # books = Goodreads.Api.top_five_books("Mockingbird")
+    user = %{id: "2883908308404075", first_name: "Chong", last_name: "Hao"}
+    response = %{
+      attachment: %{
+        payload: %{
+          elements: [
+            %{
+              buttons: [
+                %{
+                  payload: "BOOK_REVIEW_24817626",
+                  title: "Review",
+                  type: "postback"
+                }
+              ],
+              image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1451442088l/24817626._SX98_.jpg",
+              subtitle: "Harper Lee",
+              title: "Go Set a Watchman (To Kill a Mockingbird)"
+            }
+          ],
+          template_type: "generic"
+        },
+        type: "template"
+      }
+    }
+    GraphClient.Api.send_template(user, response)
+
     render(conn, "hello.json")
   end
 
@@ -16,12 +39,6 @@ defmodule ChatbotWeb.ChatbotController do
     |> AttachmentTemplate.getAttachment()
     IO.inspect template
     user = %{id: "2883908308404075", first_name: "Chong", last_name: "Hao"}
-    # encoded = Poison.encode!( %{
-    #   recipient: %{
-    #     id: user.id
-    #   },
-    #   message: template
-    # })
 
     # IO.inspect encoded
     x = GraphClient.Api.send_template(user, template)
@@ -34,7 +51,8 @@ defmodule ChatbotWeb.ChatbotController do
     token = Map.get(params, "hub.verify_token")
     challenge = Map.get(params, "hub.challenge")
 
-    status = if mode == "subscribe" && token == "ba212eeb69a50f8c4e3533992e98a125" do
+    status = if mode == "subscribe" &&
+              token == Application.get_env(:chatbot, __MODULE__)[:verify_token] do
       :ok
     else
       :forbidden
@@ -61,7 +79,7 @@ defmodule ChatbotWeb.ChatbotController do
         IO.puts("!!!!!Response!!!!!")
         IO.inspect(responses)
         responses
-        |> Enum.each((fn(response) -> GraphClient.Api.send_message(user, response) end))
+        |> Enum.each((fn(response) -> GraphClient.Api.send_response(user, response) end))
         # Enum.each(responses, fun)
 
       rescue
@@ -96,15 +114,18 @@ defmodule ChatbotWeb.ChatbotController do
     IO.puts("handleEntry")
     IO.inspect(entry)
     [head] = Map.get(entry, "messaging")
-    handleMessage(head)
+    handleMessaging(head)
   end
 
-  defp handleMessage(message) do
-    IO.puts("handleMessage")
-    IO.inspect(message)
-    postback = Map.get(message, "postback")
-    quick_reply = Map.get(message, "quick_reply")
-    text = Map.get(message, "text")
+  defp handleMessaging(messaging) do
+    IO.puts("handleMessaging")
+    IO.inspect(messaging)
+    postback = Map.get(messaging, "postback")
+    # IO.inspect(postback)
+    quick_reply = get_in(messaging, ["message", "quick_reply"])
+    text = get_in(messaging, ["message", "text"])
+    IO.puts "text"
+    IO.inspect(text)
     cond do
       postback ->
         handlePostback(postback)
@@ -112,6 +133,8 @@ defmodule ChatbotWeb.ChatbotController do
         handleQuickReply(quick_reply)
       text ->
         handleTextMessage(text)
+      true ->
+        IO.puts "Unhandled message"
     end
   end
 
@@ -123,18 +146,32 @@ defmodule ChatbotWeb.ChatbotController do
 
   defp handleTextMessage(text) do
     IO.puts("handleTextMessage")
-    cond do
-      Integer.parse(text) ->
-        # search goodread books
-        IO.puts("Search by ID")
-      true ->
+    book_id = Integer.parse(text)
+    IO.inspect book_id
+    books = cond do
+      {:error} ->
         # search by title
         IO.puts("Search by title")
-
+        Goodreads.Api.top_five_books(text)
+      true ->
+        # search goodread books
+        IO.puts("Search by ID")
+        book = Goodreads.Api.get_book(book_id)
+        if book != nil do
+          [book]
+        else
+          []
+        end
     end
 
+    if length(books) > 0 do
+      Enum.concat([
+        ResponseFactory.general_message("Here's what we found"),
+      ], Enum.map(books, fn(book) -> ResponseFactory.suggest_book(book) end))
+    else
+      [ResponseFactory.book_empty_results()]
+    end
 
-    [ResponseFactory.fallback()]
   end
 
   defp handleQuickReply(quick_reply) do
@@ -155,9 +192,9 @@ defmodule ChatbotWeb.ChatbotController do
         book_id = payload
         |> String.slice(String.length("BOOK_REVIEW_")..-1)
         x = Goodreads.Api.get_review_iframe_url(book_id)
-        sentiment = IbmClient.Api.get_sentiment(x)
-        [ResponseFactory.book_review(sentinment)]
-
+        IO.puts "Sentiment"
+        sentiment = IbmClient.Api.get_sentiment(x) |> IO.inspect
+        [ResponseFactory.book_review(sentiment)]
       true ->
         nil
     end
