@@ -1,31 +1,8 @@
 defmodule ChatbotWeb.ChatbotController do
   use ChatbotWeb, :controller
   def hello(conn, _params) do
-    # books = Goodreads.Api.top_five_books("Mockingbird")
-    user = %{id: "2883908308404075", first_name: "Chong", last_name: "Hao"}
-    response = %{
-      attachment: %{
-        payload: %{
-          elements: [
-            %{
-              buttons: [
-                %{
-                  payload: "BOOK_REVIEW_24817626",
-                  title: "Review",
-                  type: "postback"
-                }
-              ],
-              image_url: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1451442088l/24817626._SX98_.jpg",
-              subtitle: "Harper Lee",
-              title: "Go Set a Watchman (To Kill a Mockingbird)"
-            }
-          ],
-          template_type: "generic"
-        },
-        type: "template"
-      }
-    }
-    GraphClient.Api.send_template(user, response)
+    Goodreads.Api.get_book("24817626")
+    |> IO.inspect
 
     render(conn, "hello.json")
   end
@@ -146,14 +123,14 @@ defmodule ChatbotWeb.ChatbotController do
 
   defp handleTextMessage(text) do
     IO.puts("handleTextMessage")
-    book_id = Integer.parse(text)
-    IO.inspect book_id
-    books = cond do
-      {:error} ->
+    parsed = Integer.parse(text)
+    IO.inspect parsed
+    books = case parsed do
+      :error ->
         # search by title
         IO.puts("Search by title")
         Goodreads.Api.top_five_books(text)
-      true ->
+      { book_id, _} ->
         # search goodread books
         IO.puts("Search by ID")
         book = Goodreads.Api.get_book(book_id)

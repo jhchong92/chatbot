@@ -35,10 +35,10 @@ defmodule Goodreads do
       Goodreads.get!("/book/show.xml?id=#{id}")
       |> (fn(x) -> x.body end).()
       |>  xpath(
-          ~x"//book"l,
+          ~x"//book",
           id: ~x"./id/text()",
           title: ~x"./title/text()",
-          author_name: ~x"./author/name/text()",
+          author_name: ~x"./authors/author/name/text()",
           image_url: ~x"./image_url/text()"
         )
     end
