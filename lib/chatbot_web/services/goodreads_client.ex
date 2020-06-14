@@ -44,6 +44,7 @@ defmodule Goodreads do
     end
 
     def get_review_iframe_url(book_id) do
+      IO.puts "get_review_iframe_url"
       widget = Goodreads.get!("/book/show.xml?id=#{book_id}")
       |> (fn(x) -> x.body end).()
       |> xpath(
@@ -54,7 +55,6 @@ defmodule Goodreads do
       [ _ | tail ] = Regex.run(~r/src="([^\s]*)"\s+/, widget)
       tail
       # IO.puts "TAILL"
-      # IO.inspect result
     end
   end
 end

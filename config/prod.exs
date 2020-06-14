@@ -17,6 +17,23 @@ config :chatbot, ChatbotWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
+config :chatbot, ChatbotWeb.ChatbotController,
+  page_access_token: System.get_env("PAGE_ACCESS_TOKEN"),
+  verify_token: "ba212eeb69a50f8c4e3533992e98a125"
+
+
+config :chatbot, GraphClient,
+  graph_url: "https://graph.facebook.com",
+  page_id: System.get_env("PAGE_ID"),
+  app_id: System.get_env("APP_ID"),
+  page_access_token: System.get_env("PAGE_ACCESS_TOKEN"),
+  app_secret: System.get_env("APP_SECRET")
+
+config :chatbot, IbmClient,
+  url: "https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/c7482003-969f-44b6-aa06-9b80ee40b86d/v1",
+  version: "2019-07-02",
+  api_key: System.get_env("IBM_API_KEY")
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
