@@ -1,25 +1,6 @@
 defmodule ChatbotWeb.ChatbotController do
   use ChatbotWeb, :controller
   def hello(conn, _params) do
-    Goodreads.Api.get_book("24817626")
-    |> IO.inspect
-
-    render(conn, "hello.json")
-  end
-
-  def listBooks(conn, _params) do
-    HTTPoison.start()
-    books = Goodreads.Api.top_five_books("mockingbird")
-    IO.inspect(books)
-    book = List.first(books)
-    template = AttachmentTemplateFactory.book_attachment(book)
-    |> AttachmentTemplate.getAttachment()
-    IO.inspect template
-    user = %{id: "2883908308404075", first_name: "Chong", last_name: "Hao"}
-
-    # IO.inspect encoded
-    x = GraphClient.Api.send_template(user, template)
-    IO.inspect x
     render(conn, "hello.json")
   end
 
@@ -57,24 +38,14 @@ defmodule ChatbotWeb.ChatbotController do
         IO.inspect(responses)
         responses
         |> Enum.each((fn(response) -> GraphClient.Api.send_response(user, response) end))
-        # Enum.each(responses, fun)
-
       rescue
         _ -> "Error!"
       end
     end
-    # {:ok, body, _conn} = read_body(conn)
-    # IO.puts("*******Body*********")
-    # IO.inspect(body)
-
-
-    # user = %{id: "2883908308404075", first_name: "Chong", last_name: "Hao"}
-    # x = GraphClient.Api.send_message(user, "Hello you", ["Thanks"])
-    # IO.inspect(x)
 
     conn
       |> put_status(:ok)
-      |> text("hello")
+      |> text("done")
   end
 
   def setup(conn, _params) do

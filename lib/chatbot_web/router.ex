@@ -24,7 +24,6 @@ defmodule ChatbotWeb.Router do
     pipe_through :api
 
     get "/", ChatbotController, :hello
-    get "/books", ChatbotController, :listBooks
     get "/hook", ChatbotController, :hook
     post "/hook", ChatbotController, :hookHandle
 
