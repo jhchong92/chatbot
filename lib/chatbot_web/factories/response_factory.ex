@@ -1,8 +1,7 @@
 defmodule ResponseFactory do
   def get_started() do
     Response.text_message("""
-      Thank you for using Goodreads' service. We can provide search results
-      based on a book title or a Goodreads book ID. Which would you prefer?
+      Thank you for using Goodreads' service. We can provide search results based on a book title or a Goodreads book ID. Which would you prefer?
       """,
       [
         QuickReply.new("Book Title", "SEARCH_BOOK_TITLE"),
@@ -29,8 +28,7 @@ defmodule ResponseFactory do
 
   def book_empty_results() do
     Response.text_message("""
-      Sorry.. I could not find anything related. Please enter another title or Goodreads book ID or
-      you may restart this conversation.
+      Sorry.. I could not find anything related. Please enter another title or Goodreads book ID or you may restart this conversation.
     """, [
       QuickReply.new("Start again", "GET_STARTED")
     ])
@@ -38,8 +36,7 @@ defmodule ResponseFactory do
 
   def fallback() do
     Response.text_message("""
-      Sorry.. I'm still new. Please navigate the conversation by clicking on the
-      available option buttons.
+      Sorry.. I'm still new. Please navigate the conversation by clicking on the available option buttons.
     """, [
       QuickReply.new("Start again", "GET_STARTED")
     ])
@@ -57,8 +54,7 @@ defmodule ResponseFactory do
           """
        "negative" ->
           """
-          The recent reviews for this book skews towards the negative side,
-          we do not recommend this for reading.
+          The recent reviews for this book skews towards the negative side, we do not recommend this for reading.
           """
         _ ->
           """
